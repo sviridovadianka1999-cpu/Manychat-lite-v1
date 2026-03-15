@@ -43,13 +43,19 @@ No SaaS/multi-tenant/RBAC/billing/drag-and-drop/broadcasts/analytics/A-B/CRM/Tel
 3. Create `.env` from `.env.example`.
 4. Init schema: `npm run db:init`
 5. Seed data: `npm run db:seed`
-6. Run app: `npm run dev`
+6. Run app: `npm run dev` (cross-platform, fixed port 3000)
 7. Health check: `GET /api/health`
 8. Start TUNA tunnel to local `3000` and set Meta callback to:
    - `https://<tuna-domain>/api/meta/webhook`
 9. Verify webhook using `META_VERIFY_TOKEN`.
 
 ## Local webhook test
+Cross-platform (Node):
+```bash
+npm run webhook:sample
+```
+
+Optional bash variant (if you use WSL/Git Bash):
 ```bash
 ./scripts/test-webhook.sh http://localhost:3000/api/meta/webhook examples/sample-comment-webhook.json
 ```
@@ -59,15 +65,9 @@ No SaaS/multi-tenant/RBAC/billing/drag-and-drop/broadcasts/analytics/A-B/CRM/Tel
 npm run check:local
 ```
 
-Checklist content:
-1. `npm install`
-2. `cp .env.example .env` and set real values
-3. `npm run db:init`
-4. `npm run db:seed`
-5. `npm run dev`
-6. `curl http://localhost:3000/api/health`
-7. `./scripts/test-webhook.sh http://localhost:3000/api/meta/webhook examples/sample-comment-webhook.json`
-8. Verify rows appear in `incoming_events`, `flow_executions`, `outgoing_messages`
+## Windows (PowerShell) quick note
+- All core npm commands work in PowerShell (`npm run dev`, `npm run start`, `npm run check:local`, `npm run webhook:sample`).
+- Bash scripts are optional only (WSL/Git Bash).
 
 ## What can be tested locally now
 - Health endpoint.

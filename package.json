@@ -3,15 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p ${PORT:-3000}",
+    "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start -p ${PORT:-3000}",
+    "start": "next start -p 3000",
     "lint": "next lint",
     "db:init": "node scripts/init-db.mjs",
     "db:seed": "tsx scripts/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check:local": "bash scripts/check-local.sh"
+    "check:local": "node scripts/check-local.mjs",
+    "webhook:sample": "node scripts/test-webhook.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
