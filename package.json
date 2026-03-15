@@ -10,7 +10,8 @@
     "db:init": "node scripts/init-db.mjs",
     "db:seed": "tsx scripts/seed.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "check:local": "bash scripts/check-local.sh"
   },
   "dependencies": {
     "clsx": "^2.1.1",

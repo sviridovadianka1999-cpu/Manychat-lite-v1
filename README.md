@@ -9,8 +9,12 @@ Internal tool for one business: receive Meta webhook events, run JSON flows (tri
 
 ### Important naming note
 - `send_comment_reply` uses `POST /{ig-comment-id}/replies` and creates a **public comment reply**.
-- This project **does not claim** that `send_comment_reply` is an Instagram private DM reply.
-- `send_dm` uses Graph API messaging (`POST /me/messages`, `messaging_product=instagram`) and requires proper Meta permissions/access mode.
+- `send_dm` is a separate messaging call (`POST /me/messages`, `messaging_product=instagram`).
+- This project **does not claim** that comment reply equals private DM reply.
+
+### Meta/docs verification honesty note
+- In this execution environment, direct requests to developers.facebook.com were blocked (`403` via proxy), so this repo does **not** claim that docs were re-validated from inside this CI/container run.
+- Production behavior still depends on your real Meta app mode, token type, granted permissions, and review/access status.
 
 ## Local architecture (main scenario)
 - Next.js app runs locally (`http://localhost:3000`).
@@ -49,6 +53,21 @@ No SaaS/multi-tenant/RBAC/billing/drag-and-drop/broadcasts/analytics/A-B/CRM/Tel
 ```bash
 ./scripts/test-webhook.sh http://localhost:3000/api/meta/webhook examples/sample-comment-webhook.json
 ```
+
+## Manual local smoke checklist
+```bash
+npm run check:local
+```
+
+Checklist content:
+1. `npm install`
+2. `cp .env.example .env` and set real values
+3. `npm run db:init`
+4. `npm run db:seed`
+5. `npm run dev`
+6. `curl http://localhost:3000/api/health`
+7. `./scripts/test-webhook.sh http://localhost:3000/api/meta/webhook examples/sample-comment-webhook.json`
+8. Verify rows appear in `incoming_events`, `flow_executions`, `outgoing_messages`
 
 ## What can be tested locally now
 - Health endpoint.
