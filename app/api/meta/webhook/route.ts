@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { env } from "@/src/config/env";
-import { startScheduler } from "@/src/scheduler";
 import { handleMetaWebhook } from "@/src/meta/webhook-handler";
 import { webhookPayloadSchema } from "@/src/validators/meta-webhook";
-
-startScheduler();
 
 export async function GET(req: NextRequest) {
   const mode = req.nextUrl.searchParams.get("hub.mode");

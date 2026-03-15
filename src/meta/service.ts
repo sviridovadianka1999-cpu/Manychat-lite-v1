@@ -22,12 +22,14 @@ async function callMeta(endpoint: string, payload: Record<string, unknown>): Pro
   }
 }
 
-export async function sendPrivateReply(igCommentId: string, message: string) {
+// Official: POST /{ig-comment-id}/replies creates a public comment reply.
+export async function sendCommentReply(igCommentId: string, message: string) {
   return callMeta(`${igCommentId}/replies`, { message });
 }
 
+// Official Instagram Messaging API path via Graph API.
 export async function sendDm(igUserId: string, message: string) {
-  return callMeta(`me/messages`, {
+  return callMeta("me/messages", {
     recipient: { id: igUserId },
     message: { text: message },
     messaging_product: "instagram"

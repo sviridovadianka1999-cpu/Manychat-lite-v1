@@ -17,13 +17,12 @@ export type ConditionType =
   | "flow_not_completed_before";
 
 export type ActionType =
-  | "send_private_reply"
+  | "send_comment_reply"
   | "send_dm"
   | "add_tag"
   | "remove_tag"
   | "set_custom_field"
   | "wait"
-  | "branch"
   | "stop_flow"
   | "call_external_webhook"
   | "log_message";
