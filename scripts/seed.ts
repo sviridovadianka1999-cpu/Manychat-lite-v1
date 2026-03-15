@@ -7,7 +7,7 @@ const flowName = "NSK Comment Funnel";
 const flowDescription = "Seed flow for comment trigger";
 
 export const demoFlowDefinition = {
-  trigger: { type: "instagram_comment_contains_keyword", config: { keyword: "НСК" } },
+  trigger: { type: "instagram_comment_contains_keyword", config: { keywords: ["НСК", "Новосибирск"], matchMode: "contains", caseInsensitive: true } },
   nodes: [
     { id: "trigger", type: "trigger" },
     { id: "a1", type: "action", config: { type: "send_comment_reply", text: "Отправил в директ" } },

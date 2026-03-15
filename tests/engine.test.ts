@@ -25,4 +25,59 @@ describe("flow engine helpers", () => {
   test("contact_has_tag condition", () => {
     expect(conditionContactHasTag(["nsk_interest"], "nsk_interest")).toBe(true);
   });
+
+  test("backward compatibility: keyword -> keywords[]", () => {
+    expect(
+      matchTrigger(
+        "instagram_comment_contains_keyword",
+        { keyword: "НСК" },
+        "instagram_comment",
+        "Ищу НСК"
+      )
+    ).toBe(true);
+  });
+
+  test("keyword match mode: contains", () => {
+    expect(
+      matchTrigger(
+        "instagram_comment_contains_keyword",
+        { keywords: ["НСК"], matchMode: "contains", caseInsensitive: true },
+        "instagram_comment",
+        "Хочу НСК тусовку"
+      )
+    ).toBe(true);
+  });
+
+  test("keyword match mode: equals", () => {
+    expect(
+      matchTrigger(
+        "instagram_comment_contains_keyword",
+        { keywords: ["нск"], matchMode: "equals", caseInsensitive: true },
+        "instagram_comment",
+        "НСК"
+      )
+    ).toBe(true);
+  });
+
+  test("keyword match mode: starts_with", () => {
+    expect(
+      matchTrigger(
+        "instagram_comment_contains_keyword",
+        { keywords: ["нск"], matchMode: "starts_with", caseInsensitive: true },
+        "instagram_comment",
+        "НСК куда пойти"
+      )
+    ).toBe(true);
+  });
+
+  test("keyword case-insensitive toggle", () => {
+    expect(
+      matchTrigger(
+        "instagram_comment_contains_keyword",
+        { keywords: ["нск"], matchMode: "contains", caseInsensitive: false },
+        "instagram_comment",
+        "НСК"
+      )
+    ).toBe(false);
+  });
 });

@@ -16,6 +16,15 @@ Internal tool for one business: receive Meta webhook events, run JSON flows (tri
 - In this execution environment, direct requests to developers.facebook.com were blocked (`403` via proxy), so this repo does **not** claim that docs were re-validated from inside this CI/container run.
 - Production behavior still depends on your real Meta app mode, token type, granted permissions, and review/access status.
 
+
+### Keyword trigger config
+For `instagram_comment_contains_keyword` trigger:
+- `keywords`: array of strings
+- `matchMode`: `contains` | `equals` | `starts_with`
+- `caseInsensitive`: boolean
+
+Backward compatibility: old flows with `config.keyword` are still supported and treated as one-item `keywords` array.
+
 ## Local architecture (main scenario)
 - Next.js app runs locally (`http://localhost:3000`).
 - PostgreSQL runs locally (`localhost:5432`) and is **never exposed publicly**.
@@ -23,7 +32,7 @@ Internal tool for one business: receive Meta webhook events, run JSON flows (tri
 - Meta webhook callback URL points to TUNA URL and proxies into local app.
 
 ## v1 includes
-- Trigger types: `instagram_comment_contains_keyword`, `instagram_comment_any`, `instagram_dm_any`, `instagram_dm_contains_keyword`, `instagram_story_reply`.
+- Trigger types: `instagram_comment_contains_keyword`, `instagram_comment_any`, `instagram_dm_any`, `instagram_dm_contains_keyword`, `instagram_story_reply` (keyword trigger config supports `keywords[]`, `matchMode`, `caseInsensitive`).
 - Conditions: `text_contains`, `text_equals`, `text_starts_with`, `contact_has_tag`, `contact_not_has_tag`, `custom_field_equals`, `custom_field_exists`, `source_media_equals`, `flow_not_completed_before`.
 - Actions: `send_comment_reply`, `send_dm`, `add_tag`, `remove_tag`, `set_custom_field`, `wait`, `stop_flow`, `call_external_webhook`, `log_message`.
 - Built-in scheduler polling waiting steps.
@@ -32,7 +41,7 @@ Internal tool for one business: receive Meta webhook events, run JSON flows (tri
 ## Current admin UI scope (truthful)
 - Implemented: list/detail/read views for entities and operational visibility.
 - Not implemented in this v1 UI: full CRUD forms with toggle/delete controls.
-- Flow editing is currently done by updating `definition_json` in DB (or seed/custom SQL), then viewing results in UI.
+- Flow trigger config for keyword-based comment triggers can be edited in Flow detail UI (keywords, match mode, case-insensitive flag).
 
 ## Non-goals
 No SaaS/multi-tenant/RBAC/billing/drag-and-drop/broadcasts/analytics/A-B/CRM/Telegram/WhatsApp/email/VPS/public DB/external queues.
