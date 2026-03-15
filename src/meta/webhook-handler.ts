@@ -23,11 +23,18 @@ export async function handleMetaWebhook(payload: WebhookPayload) {
 
     const flows = await listEnabledFlows();
     for (const flow of flows.rows) {
-      if (matchTrigger(flow.definition_json.trigger.type, flow.definition_json.trigger.config, event.eventType, event.text)) {
+      if (
+        matchTrigger(flow.definition_json.trigger.type, flow.definition_json.trigger.config, event.eventType, event.text, {
+          sourceMediaId: event.sourceMediaId
+        })
+      ) {
         const context: ExecutionContext = {
           eventKey,
           text: event.text,
           sourceMedia: event.sourceMedia,
+          sourceMediaId: event.sourceMediaId,
+          sourceMediaProductType: event.sourceMediaProductType,
+          sourceMediaRaw: event.sourceMediaRaw,
           platformUserId: event.platformUserId,
           commentId: event.commentId,
           raw: event.raw
@@ -40,7 +47,20 @@ export async function handleMetaWebhook(payload: WebhookPayload) {
 }
 
 function normalizeEvents(payload: WebhookPayload) {
-  const out: Array<{ eventType: string; externalId?: string; platformUserId?: string; text?: string; sourceMedia?: string; commentId?: string; username?: string; displayName?: string; raw: unknown }> = [];
+  const out: Array<{
+    eventType: string;
+    externalId?: string;
+    platformUserId?: string;
+    text?: string;
+    sourceMedia?: string;
+    sourceMediaId?: string;
+    sourceMediaProductType?: string;
+    sourceMediaRaw?: unknown;
+    commentId?: string;
+    username?: string;
+    displayName?: string;
+    raw: unknown;
+  }> = [];
   for (const entry of payload.entry ?? []) {
     for (const change of entry.changes ?? []) {
       const value = change.value ?? {};
@@ -50,6 +70,9 @@ function normalizeEvents(payload: WebhookPayload) {
           externalId: String(value.id ?? ""),
           platformUserId: String(value.from?.id ?? ""),
           text: String(value.text ?? ""),
+          sourceMediaId: value.media?.id ? String(value.media.id) : undefined,
+          sourceMediaProductType: value.media?.media_product_type ? String(value.media.media_product_type) : undefined,
+          sourceMediaRaw: value.media ?? undefined,
           commentId: String(value.id ?? ""),
           raw: change
         });

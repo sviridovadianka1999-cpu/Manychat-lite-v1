@@ -25,6 +25,14 @@ For `instagram_comment_contains_keyword` trigger:
 
 Backward compatibility: old flows with `config.keyword` are still supported and treated as one-item `keywords` array.
 
+### Comment trigger media scope
+For comment triggers (`instagram_comment_any`, `instagram_comment_contains_keyword`) you can set:
+- `scopeMode`: `all` | `specific_media`
+- `allowedMediaLinks`: Instagram post/reel links (input in UI)
+- `allowedMediaIds`: resolved media IDs used by runtime matching
+
+Runtime matching is done by `media.id` from webhook payload. If `scopeMode` is `specific_media`, trigger matches only for comments from allowed media IDs.
+
 ## Local architecture (main scenario)
 - Next.js app runs locally (`http://localhost:3000`).
 - PostgreSQL runs locally (`localhost:5432`) and is **never exposed publicly**.
@@ -41,7 +49,7 @@ Backward compatibility: old flows with `config.keyword` are still supported and 
 ## Current admin UI scope (truthful)
 - Implemented: list/detail/read views for entities and operational visibility.
 - Not implemented in this v1 UI: full CRUD forms with toggle/delete controls.
-- Flow trigger config for keyword-based comment triggers can be edited in Flow detail UI (keywords, match mode, case-insensitive flag).
+- Flow trigger config for comment triggers can be edited in Flow detail UI (keywords, match mode, case-insensitive flag, scope mode, media links).
 
 ## Non-goals
 No SaaS/multi-tenant/RBAC/billing/drag-and-drop/broadcasts/analytics/A-B/CRM/Telegram/WhatsApp/email/VPS/public DB/external queues.

@@ -48,6 +48,9 @@ export type FlowDefinition = {
 export type ExecutionContext = {
   text?: string;
   sourceMedia?: string;
+  sourceMediaId?: string;
+  sourceMediaProductType?: string;
+  sourceMediaRaw?: unknown;
   platformUserId?: string;
   commentId?: string;
   eventKey: string;

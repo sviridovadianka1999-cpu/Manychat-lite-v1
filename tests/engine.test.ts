@@ -80,4 +80,83 @@ describe("flow engine helpers", () => {
       )
     ).toBe(false);
   });
+
+  test("comment trigger scopeMode=all works as before", () => {
+    expect(
+      matchTrigger(
+        "instagram_comment_any",
+        { scopeMode: "all" },
+        "instagram_comment",
+        "hello",
+        { sourceMediaId: "1789" }
+      )
+    ).toBe(true);
+  });
+
+  test("comment trigger specific_media matches only allowed sourceMediaId", () => {
+    expect(
+      matchTrigger(
+        "instagram_comment_any",
+        { scopeMode: "specific_media", allowedMediaIds: ["1789", "1790"] },
+        "instagram_comment",
+        "hello",
+        { sourceMediaId: "1790" }
+      )
+    ).toBe(true);
+    expect(
+      matchTrigger(
+        "instagram_comment_any",
+        { scopeMode: "specific_media", allowedMediaIds: ["1789", "1790"] },
+        "instagram_comment",
+        "hello",
+        { sourceMediaId: "9999" }
+      )
+    ).toBe(false);
+  });
+
+  test("comment trigger specific_media with empty ids does not match", () => {
+    expect(
+      matchTrigger(
+        "instagram_comment_any",
+        { scopeMode: "specific_media", allowedMediaIds: [] },
+        "instagram_comment",
+        "hello",
+        { sourceMediaId: "1789" }
+      )
+    ).toBe(false);
+  });
+
+  test("keyword + specific media both required", () => {
+    expect(
+      matchTrigger(
+        "instagram_comment_contains_keyword",
+        { keywords: ["нск"], matchMode: "contains", caseInsensitive: true, scopeMode: "specific_media", allowedMediaIds: ["1789"] },
+        "instagram_comment",
+        "НСК привет",
+        { sourceMediaId: "1789" }
+      )
+    ).toBe(true);
+
+    expect(
+      matchTrigger(
+        "instagram_comment_contains_keyword",
+        { keywords: ["нск"], matchMode: "contains", caseInsensitive: true, scopeMode: "specific_media", allowedMediaIds: ["1789"] },
+        "instagram_comment",
+        "НСК привет",
+        { sourceMediaId: "2000" }
+      )
+    ).toBe(false);
+  });
+
+  test("backward compatibility: old flows without scopeMode behave as all", () => {
+    expect(
+      matchTrigger(
+        "instagram_comment_any",
+        {},
+        "instagram_comment",
+        "hello",
+        { sourceMediaId: "anything" }
+      )
+    ).toBe(true);
+  });
 });

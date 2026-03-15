@@ -2,6 +2,10 @@ import { FlowDefinition, TriggerType } from "@/src/types/flow";
 
 type MatchMode = "contains" | "equals" | "starts_with";
 
+type TriggerMatchInput = {
+  sourceMediaId?: string;
+};
+
 function normalizeKeywords(config: Record<string, unknown> | undefined) {
   const rawKeywords = Array.isArray(config?.keywords)
     ? config?.keywords
@@ -12,6 +16,13 @@ function normalizeKeywords(config: Record<string, unknown> | undefined) {
   return rawKeywords
     .map((item) => String(item).trim())
     .filter((item) => item.length > 0);
+}
+
+function normalizeAllowedMediaIds(config: Record<string, unknown> | undefined) {
+  if (!Array.isArray(config?.allowedMediaIds)) return [];
+  return config.allowedMediaIds
+    .map((id) => String(id).trim())
+    .filter((id) => id.length > 0);
 }
 
 function matchByMode(text: string, keyword: string, mode: MatchMode) {
@@ -36,12 +47,31 @@ function matchKeywordConfig(config: Record<string, unknown> | undefined, text?: 
   });
 }
 
-export function matchTrigger(triggerType: TriggerType, config: Record<string, unknown> | undefined, eventType: string, text?: string) {
-  if (triggerType === "instagram_comment_any") return eventType === "instagram_comment";
+function matchCommentScope(config: Record<string, unknown> | undefined, input: TriggerMatchInput) {
+  const scopeMode = config?.scopeMode === "specific_media" ? "specific_media" : "all";
+  if (scopeMode === "all") return true;
+
+  const allowedMediaIds = normalizeAllowedMediaIds(config);
+  if (allowedMediaIds.length === 0) return false;
+  if (!input.sourceMediaId) return false;
+
+  return allowedMediaIds.includes(String(input.sourceMediaId));
+}
+
+export function matchTrigger(
+  triggerType: TriggerType,
+  config: Record<string, unknown> | undefined,
+  eventType: string,
+  text?: string,
+  input: TriggerMatchInput = {}
+) {
+  if (triggerType === "instagram_comment_any") {
+    return eventType === "instagram_comment" && matchCommentScope(config, input);
+  }
   if (triggerType === "instagram_dm_any") return eventType === "instagram_dm";
   if (triggerType === "instagram_story_reply") return eventType === "instagram_story_reply";
   if (triggerType === "instagram_comment_contains_keyword") {
-    return eventType === "instagram_comment" && matchKeywordConfig(config, text);
+    return eventType === "instagram_comment" && matchCommentScope(config, input) && matchKeywordConfig(config, text);
   }
   if (triggerType === "instagram_dm_contains_keyword") {
     return eventType === "instagram_dm" && matchKeywordConfig(config, text);
