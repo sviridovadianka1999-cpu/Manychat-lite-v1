@@ -1,0 +1,15 @@
+{
+  "object": "instagram",
+  "entry": [{
+    "id": "17841400000000000",
+    "changes": [{
+      "field": "messages",
+      "value": {
+        "mid": "mid.002",
+        "text": "ответ на сторис",
+        "from": { "id": "1234567890" },
+        "item": "story_mention"
+      }
+    }]
+  }]
+}
